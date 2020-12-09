@@ -1,15 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+#if !NET5_0
 using System.Reflection;
 using System.Reflection.Emit;
+#endif
 using Venflow.Modeling;
 
 namespace Venflow.Dynamic.Instantiater
 {
     internal static class DatabaseTableFactory
     {
-        internal static Action<Database, IList<Entity>> CreateInstantiater(Type customDatabaseType, IList<PropertyInfo> tableProperties, IList<Entity> entities)
+        internal static Action<Database, IList<Entity>> GetOrCreateInstantiater(Type customDatabaseType
+#if !NET5_0
+            , IList<PropertyInfo> tableProperties, IList<Entity> entities
+#endif
+            )
         {
+#if NET5_0
+            return (Action<Database, IList<Entity>>)customDatabaseType.Assembly.GetType($"Venflow.Dynamic.Instantiater.{customDatabaseType.Name}Instantiater").GetMethod("Instantiate").CreateDelegate(typeof(Action<Database, IList<Entity>>));
+#else
             var databaseType = typeof(Database);
             var entitiesListType = typeof(IList<Entity>);
 
@@ -37,9 +46,6 @@ namespace Venflow.Dynamic.Instantiater
 
             instantiaterMethodIL.Emit(OpCodes.Ret);
 
-#if NETCOREAPP5_0
-            return instantiaterMethod.CreateDelegate<Action<Database, IList<Entity>>>();
-#else
             return (Action<Database, IList<Entity>>)instantiaterMethod.CreateDelegate(typeof(Action<Database, IList<Entity>>));
 #endif
         }
