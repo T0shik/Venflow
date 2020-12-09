@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -52,6 +52,9 @@ namespace Venflow.Modeling
             }
 
             return new DatabaseConfiguration(DatabaseTableFactory.GetOrCreateInstantiater(databaseType
+#if !NET5_0
+                , tables, entitiesArray
+#endif
                 ), new ReadOnlyDictionary<string, Entity>(entities), entitiesArray);
         }
 
