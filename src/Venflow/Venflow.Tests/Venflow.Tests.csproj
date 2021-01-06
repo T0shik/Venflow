@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Analyzer1\Analyzer1\Analyzer1.csproj" />
     <ProjectReference Include="..\Venflow.Shared\Venflow.Shared.csproj" />
     <ProjectReference Include="..\Venflow\Venflow.csproj" />
   </ItemGroup>
